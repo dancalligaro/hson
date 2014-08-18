@@ -1,0 +1,14 @@
+{
+  "name": "hson",
+  "version": "0.0.0",
+  "description": "",
+  "main": "parseHSON.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Calligaro <dancalligaro@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "lex": "^1.7.6"
+  }
+}

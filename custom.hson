@@ -1,0 +1,47 @@
+<!-- HTML friendly way of populating JSON, subset, only supporting string contents -->
+<!-- the main reason of it existance is to be able to easily create source files to populate html templates -->
+<!-- this will likely be used in static website generators -->
+
+<custom-title>hola que tal</custom-title>
+
+<custom-pepe>
+
+	<h1>Hola que tal</h1>
+	<div> este es el div</div>
+
+</custom-pepe>
+
+<custom-asd>
+	<custom-fff>
+		<custom-lone>Y este es el valor</custom-lone>
+	</custom-fff>
+</custom-asd>
+
+<custom-arr-pepe>
+
+	<custom-item>
+		<custom-prop1> hola </custom-prop1>
+		<custom-prop2> 
+			<custom-x> lala </custom-x>
+			<custom-y> hola </custom-y> 
+		</custom-prop2>
+		<custom-prop3> <a href="quetal">hola</a> </custom-prop3>
+	</custom-item>
+
+	<custom-item>
+		<custom-prop1> hola </custom-prop1>
+		<custom-prop2> hola </custom-prop2>
+		<custom-prop3> <a href="quetal">hola</a> </custom-prop3>
+
+		<custom-arr-prop5>
+			<custom-item> item1 </custom-item>
+			<custom-item> item2 </custom-item>
+		</custom-arr-prop5>
+
+	</custom-item>
+
+</custom-arr-pepe>
+
+<custom-item>
+	<div>hola que tal
+</custom-item>
