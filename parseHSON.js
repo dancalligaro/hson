@@ -1,177 +1,170 @@
 Lexer = require('lex');
-fs = require('fs');
 
-var path = [];
-var currentNode = null;
-
-//Mode can be text, node or array
-var modeObj = {
-	mode: 'node'
-}; 
-
-var currMode = modeObj;
-
-var retObj = {};
-var retPath = [];
-var retCurr = retObj;
-
-var row = 1;
-var col = 1;
-
-var theFile = fs.readFileSync('custom.hson').toString();
+var path, currentNode, modeObj, currMode, row, col, tempString, baseNode, nodesStack, lexer;
 
 //First, detect the basename for the tags
-
 var openTagRE = /<[^!\/]\s*?(.+?)\-.+?\s*?>/;
 var tagBaseRE = /<\s*?(.+?)\-.+?\s*?>/;
 var tagNameRE = /<\/?\s*?.+?\-(.+?)\s*?>/;
 var arrTagRE = /^arr-/;
 var arrItemTagRE = /^item$/;
 
-var tempString = [];
+function setupLexer(base){
 
-var baseNode = {};
-var nodesStack = [];
-nodesStack.push(baseNode);
+    lexer = new Lexer(function (char) {
+        throw new Error("Unexpected character at row " + row + ", col " + col + ": " + char);
+    });
 
-var m = theFile.match(openTagRE);
-
-if(!m.length){
-	throw "custom tag not found"
-}
-
-var base = m[0].match(tagBaseRE)[1];
-
-console.log("Using tag prefix", base);
-
-var lexer = new Lexer(function (char) {
-    throw new Error("Unexpected character at row " + row + ", col " + col + ": " + char);
-});
-
-lexer.addRule(/\n/, function (it) {
-	// console.log('detecting new line')
-    tempString.push(it);
-    row++;
-    col = 1;
-}, []);
+    lexer.addRule(/\n/, function (it) {
+        tempString.push(it);
+        row++;
+        col = 1;
+    }, []);
 
 
-lexer.addRule(/\s/, function (it) {
-    //this.reject = true;
-    // console.log('advancing sp', it)
-    tempString.push(it);
-    col++;
-}, []);
+    lexer.addRule(/\s/, function (it) {
+        tempString.push(it);
+        col++;
+    }, []);
 
-lexer.addRule(/./, function (it) {
-    //console.log('advancing char', it)
+    lexer.addRule(/./, function (it) {
 
-    tempString.push(it);
+        tempString.push(it);
 
-    if( currMode.mode != 'text' ){
-    	if( typeof currMode.mode == 'undefined' ){
-    		currMode.mode = "text";
-    	}else{
-    		throw "Invalid text inside a node type " + currMode.mode;
-    	}
-    }
-	
-	col++;
-    //this.reject = true; 
-}, []);
+        if( currMode.mode != 'text' ){
+            if( typeof currMode.mode == 'undefined' ){
+                currMode.mode = "text";
+            }else{
+                throw "Invalid text inside a node type " + currMode.mode;
+            }
+        }
+        
+        col++;
 
-lexer.addRule(/<!--.*?-->/, function (hola) {
-    console.log('comment', hola)
-}, []);
+    }, []);
 
-lexer.addRule(new RegExp("<\\s*?" + base + "-.+?\\s*?>"), function (token) {
-	
-    //opening a node
-	var tokenName = token.match(tagNameRE)[1];
-    //console.log('opening tag', token, tokenName);
-    path.push(tokenName);
-    // console.log('opening', path.join('>>>'));
-    currentNode = tokenName;
+    lexer.addRule(/<!--.*?-->/, function (commentContent) {
+        col += commentContent.length;
+    }, []);
 
-	tempString = [];
+    lexer.addRule(new RegExp("<\\s*?" + base + "-.+?\\s*?>"), function (token) {
+        //opening a node
+        
+        col += token.length;
 
-    var newToken = { tokenName: tokenName };
+        var tokenName = token.match(tagNameRE)[1];
 
-    nodesStack[nodesStack.length-1].nodes = nodesStack[nodesStack.length-1].nodes || [];
-    nodesStack[nodesStack.length-1].nodes.push(newToken);
+        path.push(tokenName);
 
-    nodesStack.push(newToken);
+        currentNode = tokenName;
 
-    //Check parents mode if inside an array 
-    if( currMode.mode == 'array' && !arrItemTagRE.test(tokenName) ){
-    	throw "Invalid token inside an array: " + tokenName;
-    }
+        tempString = [];
 
-    //Check parents mode, if inside a text node
-    if( currMode.mode == 'text' ){
-    	throw "Invlid token inside a text node: " + tokenName;
-    }
+        var newToken = { tokenName: tokenName };
 
-    currMode = currMode['-' + tokenName] = { parent: currMode };
+        nodesStack[nodesStack.length-1].nodes = nodesStack[nodesStack.length-1].nodes || [];
+        nodesStack[nodesStack.length-1].nodes.push(newToken);
 
-    if( arrTagRE.test(tokenName) ){
-    	// if this is an array, then set this mode to array
-    	currMode.mode = "array";
-        newToken.type = "array";
-    } 
+        nodesStack.push(newToken);
 
-    //retPath.push(retCurr);
-
-}, []);
-
-lexer.addRule(new RegExp("</\\s*?" + base + "-.+?\\s*?>") , function (token) {
-    //closing a node
-    
-    var tokenName = token.match(tagNameRE)[1];
-    //console.log('closing tag', token, tokenName);
-
-
-    if(currentNode != tokenName){
-        throw "Invalid closing token: " + tokenName;
-    }else{
-
-        console.log('punta0', currentNode);
-        console.log('punta1', nodesStack[nodesStack.length-1].tokenName);
-
-
-        var last = nodesStack.pop();
-
-        if(!last.nodes){ //No childs -> then it is a text node
-            last.type = "text"; 
-            last.text = tempString.join(''); 
+        //Check parents mode if inside an array 
+        if( currMode.mode == 'array' && !arrItemTagRE.test(tokenName) ){
+            throw "Invalid token inside an array: " + tokenName;
         }
 
-    	path.pop();
-    	currentNode = path.length > 0 ? path[path.length-1] : null;
-    	currMode = currMode.parent;
-    	currMode.mode = currMode.mode || 'node';
-        
+        //Check parents mode, if inside a text node
+        if( currMode.mode == 'text' ){
+            throw "Invlid token inside a text node: " + tokenName;
+        }
 
+        currMode = currMode['-' + tokenName] = { parent: currMode };
+
+        if( arrTagRE.test(tokenName) ){
+            // if this is an array, then set this mode to array
+            currMode.mode = "array";
+            newToken.type = "array";
+        } 
+
+    }, []);
+
+    lexer.addRule(new RegExp("</\\s*?" + base + "-.+?\\s*?>") , function (token) {
+        //closing a node
+        
+        var tokenName = token.match(tagNameRE)[1];
+
+        if(currentNode != tokenName){
+            throw "Invalid closing token: " + tokenName;
+        }else{
+
+            var last = nodesStack.pop();
+
+            if(!last.nodes){ //No childs -> then it is a text node
+                last.type = "text"; 
+                last.text = tempString.join(''); 
+            }
+
+            path.pop();
+            currentNode = path.length > 0 ? path[path.length-1] : null;
+            currMode = currMode.parent;
+            currMode.mode = currMode.mode || 'node';
+
+        }
+
+    }, []);
+
+
+}
+
+
+function parse(hsonStr){
+
+    path = [];
+    currentNode = null;
+
+    //Mode can be text, node or array
+    modeObj = {
+        mode: 'node'
+    }; 
+
+    currMode = modeObj;
+
+    row = 1;
+    col = 1;
+
+    tempString = [];
+
+    baseNode = {};
+    nodesStack = [];
+    nodesStack.push(baseNode);
+
+
+    var m = hsonStr.match(openTagRE);
+
+    if(!m.length){
+        throw "custom tag not found"
     }
 
-}, []);
+    var base = m[0].match(tagBaseRE)[1];
 
-lexer.input = theFile; 
+    console.log("Using tag prefix", base);
 
-lexer.lex();
+    setupLexer(base);
 
+    lexer.input = hsonStr; 
 
-//Build JSON structure;
+    lexer.lex();
 
-console.log(nodesStack[0]);
+    // Build JSON structure;
+    // console.log(nodesStack[0]);
 
-var ss = buildJSObject(nodesStack[0]);
+    var jsObj = buildJSObject(nodesStack[0]);
 
-console.log(ss);
+    return jsObj;
+
+}
+
 
 function buildJSObject(node){
-
-    debugger;
 
     var obj = {};
 
@@ -184,12 +177,13 @@ function buildJSObject(node){
     }
 
     function goDeep(node){
-        var i, ret, n;
+        var i, ret, n, name;
         if(node.nodes){
             ret = {};
             for(i=0;i<node.nodes.length;i++){
                 n=node.nodes[i];
-                ret[ n.tokenName ] = (n.type && n.type =="array") ? goDeepArr(n) : goDeep(n);
+                name = n.tokenName.length > 3 && n.tokenName.substr(0,4) == 'arr-' ? n.tokenName.substr(4) : n.tokenName;
+                ret[ name ] = (n.type && n.type =="array") ? goDeepArr(n) : goDeep(n);
             }
         }else{
             //Text node
@@ -205,4 +199,4 @@ function buildJSObject(node){
 
 }
 
-debugger;
+module.exports = { parse: parse };
