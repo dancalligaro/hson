@@ -178,7 +178,7 @@ function buildJSObject(node){
     function goDeepArr(node){
         var i, r = [];
         for(i=0;i<node.nodes.length;i++){
-            r.push(goDeep(node));
+            r.push(goDeep(node.nodes[i]));
         }
         return r;
     }
