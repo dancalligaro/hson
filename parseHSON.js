@@ -143,7 +143,7 @@ lexer.addRule(new RegExp("</\\s*?" + base + "-.+?\\s*?>") , function (token) {
 
         if(!last.nodes){ //No childs -> then it is a text node
             last.type = "text"; 
-            last.text = tempString.join('');
+            last.text = tempString.join(''); 
         }
 
     	path.pop();
@@ -163,14 +163,45 @@ lexer.lex();
 
 //Build JSON structure;
 
-console.log(nodesStack);
+console.log(nodesStack[0]);
 
-buildJSObject(nodesStack);
+var ss = buildJSObject(nodesStack[0]);
 
-function buildJSObject(syntax){
+console.log(ss);
 
-    var parents = [];
-    var obj = null;
+function buildJSObject(node){
+
+    debugger;
+
+    var obj = {};
+
+    function goDeepArr(node){
+        var i, r = [];
+        for(i=0;i<node.nodes.length;i++){
+            r.push(goDeep(node));
+        }
+        return r;
+    }
+
+    function goDeep(node){
+        var i, ret, n;
+        if(node.nodes){
+            ret = {};
+            for(i=0;i<node.nodes.length;i++){
+                n=node.nodes[i];
+                ret[ n.tokenName ] = (n.type && n.type =="array") ? goDeepArr(n) : goDeep(n);
+            }
+        }else{
+            //Text node
+            ret = node.text;
+        }
+        return ret;
+        
+    }
+
+    obj = goDeep(node);
+
+    return obj;
 
 }
 
