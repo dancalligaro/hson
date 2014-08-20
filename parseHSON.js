@@ -165,4 +165,13 @@ lexer.lex();
 
 console.log(nodesStack);
 
+buildJSObject(nodesStack);
+
+function buildJSObject(syntax){
+
+    var parents = [];
+    var obj = null;
+
+}
+
 debugger;
