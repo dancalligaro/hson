@@ -30,6 +30,9 @@ var arrItemTagRE = /^item$/;
 
 var tempString = [];
 
+var baseNode = {};
+var nodesStack = [];
+nodesStack.push(baseNode);
 
 var m = theFile.match(openTagRE);
 
@@ -45,8 +48,9 @@ var lexer = new Lexer(function (char) {
     throw new Error("Unexpected character at row " + row + ", col " + col + ": " + char);
 });
 
-lexer.addRule(/\n/, function () {
+lexer.addRule(/\n/, function (it) {
 	// console.log('detecting new line')
+    tempString.push(it);
     row++;
     col = 1;
 }, []);
@@ -84,11 +88,19 @@ lexer.addRule(new RegExp("<\\s*?" + base + "-.+?\\s*?>"), function (token) {
 	
     //opening a node
 	var tokenName = token.match(tagNameRE)[1];
-    console.log('opening tag', token, tokenName);
+    //console.log('opening tag', token, tokenName);
     path.push(tokenName);
+    // console.log('opening', path.join('>>>'));
     currentNode = tokenName;
 
 	tempString = [];
+
+    var newToken = { tokenName: tokenName };
+
+    nodesStack[nodesStack.length-1].nodes = nodesStack[nodesStack.length-1].nodes || [];
+    nodesStack[nodesStack.length-1].nodes.push(newToken);
+
+    nodesStack.push(newToken);
 
     //Check parents mode if inside an array 
     if( currMode.mode == 'array' && !arrItemTagRE.test(tokenName) ){
@@ -105,6 +117,7 @@ lexer.addRule(new RegExp("<\\s*?" + base + "-.+?\\s*?>"), function (token) {
     if( arrTagRE.test(tokenName) ){
     	// if this is an array, then set this mode to array
     	currMode.mode = "array";
+        newToken.type = "array";
     } 
 
     //retPath.push(retCurr);
@@ -115,18 +128,30 @@ lexer.addRule(new RegExp("</\\s*?" + base + "-.+?\\s*?>") , function (token) {
     //closing a node
     
     var tokenName = token.match(tagNameRE)[1];
-    console.log('closing tag', token, tokenName);
+    //console.log('closing tag', token, tokenName);
+
 
     if(currentNode != tokenName){
-    	throw "Invalid closing token: " + tokenName;
+        throw "Invalid closing token: " + tokenName;
     }else{
 
+        console.log('punta0', currentNode);
+        console.log('punta1', nodesStack[nodesStack.length-1].tokenName);
 
+
+        var last = nodesStack.pop();
+
+        if(!last.nodes){ //No childs -> then it is a text node
+            last.type = "text"; 
+            last.text = tempString.join('');
+        }
 
     	path.pop();
     	currentNode = path.length > 0 ? path[path.length-1] : null;
     	currMode = currMode.parent;
     	currMode.mode = currMode.mode || 'node';
+        
+
     }
 
 }, []);
@@ -135,3 +160,9 @@ lexer.input = theFile;
 
 lexer.lex();
 
+
+//Build JSON structure;
+
+console.log(nodesStack);
+
+debugger;
