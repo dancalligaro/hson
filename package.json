@@ -1,14 +1,25 @@
 {
   "name": "hson",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "json compatible html friendly format compiler",
   "main": "parseHSON.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Calligaro <dancalligaro@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "lex": "^1.7.6"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dancalligaro/hson.git"
+  },
+  "keywords": [
+    "hson",
+    "to",
+    "json",
+    "compiler"
+  ]
 }
