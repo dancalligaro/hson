@@ -3,9 +3,8 @@ Lexer = require('lex');
 var path, currentNode, modeObj, currMode, row, col, tempString, baseNode, nodesStack, lexer;
 
 //First, detect the basename for the tags
-var openTagRE = /<[^!\/]\s*?(.+?)\-.+?\s*?>/;
-var tagBaseRE = /<\s*?(.+?)\-.+?\s*?>/;
-var tagNameRE = /<\/?\s*?.+?\-(.+?)\s*?>/;
+var openTagRE = /<[^!\/]\s*?(.*?)\-.+?\s*?>/;
+var tagNameRE = /<\/?\s*?.*?\-(.+?)\s*?>/;
 var arrTagRE = /^arr-/;
 var arrItemTagRE = /^item$/;
 
@@ -144,11 +143,7 @@ function parse(hsonStr){
         throw "custom tag not found"
     }
 
-    var base = m[0].match(tagBaseRE)[1];
-
-    console.log("Using tag prefix", base);
-
-    setupLexer(base);
+    setupLexer("");
 
     lexer.input = hsonStr; 
 
