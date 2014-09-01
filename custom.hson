@@ -2,46 +2,46 @@
 <!-- the main reason of it existance is to be able to easily create source files to populate html templates -->
 <!-- this will likely be used in static website generators -->
 
-<custom-title>hola que tal</custom-title>
+<:title>hola que tal</:title>
 
-<custom-pepe>
+<:pepe>
 
 	<h1>Hola que tal</h1>
 	<div> este es el div</div>
 
-</custom-pepe>
+</:pepe>
 
-<custom-asd>
-	<custom-fff>
-		<custom-lone>Y este es el valor</custom-lone>
-	</custom-fff>
-</custom-asd>
+<:asd>
+	<:fff>
+		<:lone>Y este es el valor</:lone>
+	</:fff>
+</:asd>
 
-<custom-arr-pepe>
+<:arr-pepe>
 
-	<custom-item>
-		<custom-prop1> hola </custom-prop1>
-		<custom-prop2> 
-			<custom-x> lala </custom-x>
-			<custom-y> hola </custom-y> 
-		</custom-prop2>
-		<custom-prop3> <a href="quetal">hola</a> </custom-prop3>
-	</custom-item>
+	<:item>
+		<:prop1> hola </:prop1>
+		<:prop2> 
+			<:x> lala </:x>
+			<:y> hola </:y> 
+		</:prop2>
+		<:prop3> <a href="quetal">hola</a> </:prop3>
+	</:item>
 
-	<custom-item>
-		<custom-prop1> hola </custom-prop1>
-		<custom-prop2> hola </custom-prop2>
-		<custom-prop3> <a href="quetal">hola</a> </custom-prop3>
+	<:item>
+		<:prop1> hola </:prop1>
+		<:prop2> hola </:prop2>
+		<:prop3> <a href="quetal">hola</a> </:prop3>
 
-		<custom-arr-prop5>
-			<custom-item> item1 </custom-item>
-			<custom-item> item2 </custom-item>
-		</custom-arr-prop5>
+		<:arr-prop5>
+			<:item> item1 </:item>
+			<:item> item2 </:item>
+		</:arr-prop5>
 
-	</custom-item>
+	</:item>
 
-</custom-arr-pepe>
+</:arr-pepe>
 
-<custom-item>
+<:item>
 	<div>hola que tal
-</custom-item>
+</:item>
