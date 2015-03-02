@@ -47,6 +47,7 @@ HSON syntax
 Objects
 ------
 What in JSON you would do: ` { "property": "value" }`
+
 In HSON would become: ` <-property>value</-property> `.
 
 Arrays
