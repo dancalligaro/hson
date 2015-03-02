@@ -16,6 +16,38 @@ From the data types suppoted in the JSON definition, HSON currently only support
 
 Support for number, date, boolean, an undefined is not currently implemented.
 
+Also, the top level object will be an object and cannot be an an array.
+
+How to write HSON
+====
+what in JSON you would do: ` { "property": "value" }`
+in HSON would become: ` <-property>value</-property> `.
+
+Arrays
+------
+JSON 
+```json
+{ 
+    anArray: [ 
+        { "property": "value" },
+        { "property": "value" } 
+    ]
+}
+```
+
+HSON: 
+```html
+<-arr-anArray>
+    <-item>
+        <-property>value</-property>
+    </-item>
+    <-item>
+        <-property>value</-property>
+    </-item>
+</-arr-anArray>
+```
+
+
 Example
 =======
 
@@ -95,5 +127,7 @@ Output JSON
   }]
 }
 ``` 
+
+
 
 
