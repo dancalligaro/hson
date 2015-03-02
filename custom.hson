@@ -2,36 +2,39 @@
 <!-- the main reason of it existance is to be able to easily create source files to populate html templates -->
 <!-- this will likely be used in static website generators -->
 
-<-title>hola que tal</-title>
+<-title><h1>This is the <span>Title</span></h1></-title>
 
-<-pepe>
+<-aBlockOfHtml>
 
-	<h1>Hola que tal</h1>
-	<div> este es el div</div>
+	<h1>Some Title</h1>
+	<div>some content</div>
 
-</-pepe>
+</-aBlockOfHtml>
 
-<-asd>
-	<-fff>
-		<-lone>Y este es el valor</-lone>
-	</-fff>
-</-asd>
+<-anObject>
+	<-aProperty>
+		<-hereYouGo>So This is the content</-hereYouGo>
+	</-aProperty>
+	<-item>
+		<div>a malformed html. not our problem
+	</-item>
+</-anObject>
 
-<-arr-pepe>
+<-arr-thisIsAnArray>
 
 	<-item>
-		<-prop1> hola </-prop1>
+		<-prop1> something </-prop1>
 		<-prop2> 
-			<-x> lala </-x>
-			<-y> hola </-y> 
+			<-x> something </-x>
+			<-y> something </-y> 
 		</-prop2>
-		<-prop3> <a href="quetal">hola</a> </-prop3>
+		<-prop3> <a href="url">click here</a> </-prop3>
 	</-item>
 
 	<-item>
-		<-prop1> hola </-prop1>
-		<-prop2> hola </-prop2>
-		<-prop3> <a href="quetal">hola</a> </-prop3>
+		<-prop1> hi there </-prop1>
+		<-prop2> this is an example </-prop2>
+		<-prop3> <a href="url">click here again</a> </-prop3>
 
 		<-arr-prop5>
 			<-item> item1 </-item>
@@ -40,8 +43,4 @@
 
 	</-item>
 
-</-arr-pepe>
-
-<-item>
-	<div>hola que tal
-</-item>
+</-arr-thisIsAnArray>

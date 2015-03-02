@@ -9,6 +9,7 @@
   "author": "Daniel Calligaro <dancalligaro@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "js-beautify": "^1.5.4",
     "lex": "^1.7.6"
   },
   "devDependencies": {},
