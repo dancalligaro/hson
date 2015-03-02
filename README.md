@@ -7,6 +7,21 @@ Installation
 `npm install hson`
 
 
+Usage
+===
+
+`npm install hson`
+
+```
+var HSON = require('hson');
+
+obj = HSON.parse(hsonString);
+
+```
+
+To see a working example check [the hson example repo](https://github.com/dancalligaro/hson-example).
+
+
 About
 ====
 
