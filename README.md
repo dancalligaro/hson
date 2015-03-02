@@ -1,9 +1,18 @@
 HSON
 ====
 
+Installation
+===
+
+`npm install hson`
+
+
+About
+====
+
 This is an easy way of wrting HTML in a JSON alike structure.
 
-HSON covers a subset of JSON, thus it will be mapped entirely into a JSON objecto.
+HSON covers a subset of JSON, this way HSON will be mapped entirely into a JSON object.
 
 Wasn't XML's CDATA already taking care of this? Yes, but you would have to parse XML. Also XML elements have attributes which are not mapped directly into JSON.
 
@@ -14,21 +23,23 @@ From the data types suppoted in the JSON definition, HSON currently only support
  - arrays
  - strings
 
-Support for number, date, boolean, an undefined is not currently implemented.
+Support for number, date, boolean and undefined is not currently implemented.
 
 Also, the top level object will be an object and cannot be an an array.
 
-How to write HSON
+HSON syntax
 ====
-what in JSON you would do: ` { "property": "value" }`
-in HSON would become: ` <-property>value</-property> `.
+Objects
+------
+What in JSON you would do: ` { "property": "value" }`
+In HSON would become: ` <-property>value</-property> `.
 
 Arrays
 ------
 JSON 
 ```json
 { 
-    anArray: [ 
+    "anArray": [ 
         { "property": "value" },
         { "property": "value" } 
     ]
